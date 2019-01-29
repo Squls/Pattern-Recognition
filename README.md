@@ -12,7 +12,8 @@ Replace ```logo.png``` with black image on transparent background.
 
 Log in to Archive.org:
 
-```$ ia configure
+```
+$ ia configure
 
 Enter your archive.org credentials below to configure 'ia'.
 
