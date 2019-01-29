@@ -12,12 +12,12 @@ Replace ```logo.png``` with black image on transparent background.
 
 Log in to Archive.org:
 
+```$ ia configure
+Enter your archive.org credentials below to configure 'ia'.
+Email address: user@example.com
+Password:
+Config saved to: /home/user/.config/ia.ini
 ```
-$ ia configure```
-```Enter your archive.org credentials below to configure 'ia'.```
-```Email address: user@example.com```
-```Password:```
-```Config saved to: /home/user/.config/ia.ini```
 
 ### To Do
 
