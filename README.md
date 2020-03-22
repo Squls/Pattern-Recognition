@@ -8,6 +8,8 @@ Sign up for account at [http://archive.org](http://archive.org)
 
 Run ```pip install -r requirements.txt```
 
+Install *ffmpeg* by running ```apt install ffmpeg```
+
 Replace ```logo.png``` with black image on transparent background.
 
 Log in to Archive.org:
