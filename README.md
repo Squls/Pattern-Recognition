@@ -1,4 +1,4 @@
-# PatternRecog
+# Pattern Recognition
 
 Python script for automatic random generation of videos and thumbnails using Archive.org collection search API.
 
