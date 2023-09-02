@@ -6,6 +6,11 @@ from internetarchive import download
 from moviepy.editor import *
 from PIL import Image, ImageOps
 import random, os, time
+import google_auth_oauthlib.flow
+import googleapiclient.discovery
+import googleapiclient.errors
+import requests
+import json
 
 dirname = os.path.dirname(__file__)
 filename = os.path.join(dirname, 'relative/path/to/file/you/want')
@@ -19,8 +24,9 @@ print("Searching Archive.org for movies")
 totalRecords = search.num_found
 print("Returned " + str(totalRecords) + " results")
 resultList = list(search)
-downloadNum = randomNum(7,9)
+downloadNum = randomNum(6,10)
 identList = []
+titlename = ""
 print("Downloading " + str(downloadNum) + " videos")
 for x in range(downloadNum):
     randomRecordNum = randomNum(0,totalRecords)
@@ -33,6 +39,11 @@ clipList = []
 for root, dirs, files in os.walk("./"):
     for file in files:
         if file.endswith(".mp4"):
+            filestring = os.path.splitext(file)[0]
+            filestringarray = filestring.split()
+            if titlename == "":
+                titlename = titlename + filestringarray[0] + " "
+                print("Generating title: " + titlename)
             clip = VideoFileClip(os.path.join(root, file))
             length = int(clip.duration)
             start = randomNum(0,length-10)
@@ -90,6 +101,78 @@ thumb.save(filename+".png", format="png")
 mainVideo = VideoFileClip(filename+".mp4")
 newAudio = mainVideo.audio
 newAudio.write_audiofile(filename+".mp3")
-os.remove("baseVideo.mp4")
 
-#os.system('youtube-upload --title="'+ filename +'" --description="A.S. Mutter plays Beethoven" --category=Music --tags="mutter, beethoven" --recording-date="'+ datenow +'" --default-language="en" --default-audio-language="en"  --client-secrets=client_secrets.json --credentials-file=credentials.json --playlist="Pattern Recog" --file="' + filename + '.mp4"')
+### Deep AI text generation ###
+
+API_KEY = 'your_api_key_here'
+API_ENDPOINT = 'https://api.deepai.org/api/text-generator'
+text_prompt = titlename
+
+# Number of tokens to generate
+num_tokens = 100
+
+# Create headers with API key
+headers = {
+    'api-key': 'deepai text generator key'
+}
+
+# Create payload with text prompt and token count
+payload = {
+    'text': text_prompt,
+    'num_tokens': num_tokens
+}
+
+# Make POST request to the API
+response = requests.post(API_ENDPOINT, headers=headers, data=payload)
+
+data = response.json()
+generated_text = data['output']
+print(generated_text)
+
+
+### YouTube upload ###
+print("Starting YouTube upload")
+
+# Set your OAuth 2.0 credentials JSON file (downloaded from Google Cloud Console)
+CLIENT_SECRETS_FILE = "client_secrets.json"
+
+# Set the video file path
+VIDEO_FILE = filename+".mp4"
+
+# Set the YouTube API version
+API_SERVICE_NAME = "youtube"
+API_VERSION = "v3"
+
+# Set scopes for OAuth
+SCOPES = ["https://www.googleapis.com/auth/youtube.upload"]
+
+# Authenticate and authorize the user
+#flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
+    #CLIENT_SECRETS_FILE, SCOPES)
+#credentials = flow.run_local_server(port=0)
+
+# Create a YouTube Data API client instance
+#youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, credentials=credentials)
+
+# Upload the video
+#request = youtube.videos().insert(
+ #   part="snippet,status",
+ #   body={
+ #       "snippet": {
+  #          "title": titlename + "| Office For Sleepcore",
+  #          "description": generated_text,
+  #          "tags": ["sleepcore", "ambient", "documentary", "clips"],
+   #         "categoryId": "22"
+   #     },
+  #      "status": {
+ #           "privacyStatus": "public"  # Privacy status: private, unlisted, or public
+   #     }
+ #   },
+ #   media_body=VIDEO_FILE
+#)
+
+#response = request.execute()
+
+#print("Video uploaded: https://www.youtube.com/watch?v=" + response['id'])
+
+os.remove("baseVideo.mp4")
